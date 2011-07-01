@@ -4,14 +4,28 @@
 STD_INPUT_HANDLE  equ -10
 STD_OUTPUT_HANDLE	equ -11
 ;---------------------------------------
+
+includelib c:\masm32\lib\user32.lib 
+includelib c:\masm32\lib\kernel32.lib
+includelib Lenstr.lib
+includelib ReverStr.lib
+includelib StrToNum.lib
+includelib Reconversion.lib
+includelib TestStr.lib
+includelib SizeOfNum.lib
+
 EXTERN  ExitProcess@4:NEAR
 EXTERN  GetStdHandle@4:NEAR		
 EXTERN  WriteConsoleA@20:NEAR		
 EXTERN  ReadConsoleA@20:NEAR
+extern  ReverStr@12:near
+extern  StrToNum@4:near
+extern  Lenstr@4:near
+extern  Reconversion@12:near
+extern  TestStr@4:near
+extern  SizeOfNum@8:near
 
-includelib c:\masm32\lib\user32.lib 
-includelib c:\masm32\lib\kernel32.lib
-include Calculator.inc
+
 ;---------------------------------------
 .data
 
@@ -64,13 +78,13 @@ call ReadConsoleA@20
 
 ;проверка на правильность первого числа
 push offset lpBufferSpeed
-call TestStr
+call TestStr@4
 cmp eax,2
 je FalseValue
 
 push 8
 push offset lpBufferSpeed
-call SizeOfNum
+call SizeOfNum@8
 cmp eax, 1
 je FalseValue
 
@@ -91,13 +105,13 @@ call ReadConsoleA@20
 
 ;проверка на правильность второго числа
 push offset lpBufferTime
-call TestStr
+call TestStr@4
 cmp eax,2
 je FalseValue
 
 push 8
 push offset lpBufferSpeed
-call SizeOfNum
+call SizeOfNum@8
 cmp eax,1h
 je FalseValue
 
@@ -119,7 +133,7 @@ call ReadConsoleA@20
 ;проверка на наличие действия
 mov esi, offset lpMov
 push esi
-call Lenstr
+call Lenstr@4
 mov esi, offset lpMov
 add esi, ebx
 sub esi,2h
@@ -140,10 +154,10 @@ Continue3:
 
 ;преобразование первого множителя
 push offset lpBufferSpeed
-call StrToNum
+call StrToNum@4
 ;преобразование второго множителя
-push offset lpBufferTime
-call StrToNum
+push offset lpBUfferTime
+call StrToNum@4
 
 ;определение действия
 mov esi, offset lpMov
@@ -180,7 +194,7 @@ push 0
 push 0
 push offset lpBufferStringResult
 push offset lpBufferResult
-call Reconversion
+call Reconversion@12
 
 ;вывод результата
 push 0
@@ -191,15 +205,15 @@ push dwStdOutputHandle
 call WriteConsoleA@20
 
 push offset lpBufferStringResult
-call Lenstr
+call Lenstr@4
 
 push ebx
 push offset lpBufferResult
 push offset lpBufferStringResult
-call ReverStr
+call ReverStr@12
 
 push offset lpBufferResult
-call Lenstr
+call Lenstr@4
 
 mov esi, offset pForSubOrDiv
 cmp byte ptr [esi], 02dh
@@ -210,7 +224,7 @@ ContinueWrite:
 
 mov esi, offset lpBufferResult
 push esi
-call Lenstr
+call Lenstr@4
 
 push 0
 push offset dwTemp
